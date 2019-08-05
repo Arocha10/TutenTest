@@ -23,6 +23,73 @@
   color: #61dafb;
 }
 
+input {
+  padding: 5px;
+  width: 100%;
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-bottom: 0px;
+  color: #333;
+}
+
+.signInContainer {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+#sign-in-form {
+  margin-top: 10%;
+  width: 350px;
+  font-size: 14px;
+  padding-bottom: 10px;
+  box-shadow: 2px 4px 7px -3px #bbb;
+}
+
+.button {
+  background-color: #f4511e;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: auto;
+  opacity: 0.6;
+  transition: 0.3s;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  grid-template-rows: 200px;
+}
+
+.button:hover {
+  opacity: 1;
+}
+
+#sign-in-form .control {
+  margin-bottom: 15px;
+}
+.dayBox {
+  display: inline-block;
+  text-align: left;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: gray;
+}
+
+.link {
+  vertical-align: initial;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

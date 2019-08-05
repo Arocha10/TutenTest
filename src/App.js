@@ -1,26 +1,185 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { simpleAction } from "./actions/loginAction";
+import BaseInput from "./base/html5/input";
+import API from "./utils/API";
+import axios from "axios";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import logo from "./logo.svg";
+import "./App.css";
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {
+        email: "",
+        password: ""
+      },
+      token: "",
+      books: []
+    };
+  }
+
+  componentDidMount() {
+    // Load async data.
+    /*
+      // Load async data from an inexistent endpoint.
+      let userData = await API.patch("/user/login", {
+        params: {
+          email: "testapis@tuten.cl",
+          password: "1234",
+          app: "APP_BCK"
+        }
+      });
+      console.log("user", userData);
+    let params = {
+      email: "testapis@tuten.cl",
+      password: "1234",
+      app: "APP_BCK"
+    };
+    console.log(params);
+    API.put(`/rest/user/testapis%40tuten.cl`)
+      .then(res => {
+        console.log("Res", res);
+        const persons = res.data;
+      })
+      .catch(e => {
+        console.log("Error: ", e.response);
+      });*/
+  }
+
+  updateRecipient = (value, name) => {
+    let payload = null;
+    let newState = { ...this.state };
+    console.log("will change", this.props);
+    switch (name) {
+      case "email":
+        console.log("email", value);
+        newState.user = { ...this.state.user, ...{ email: value } };
+        break;
+      case "password":
+        console.log("password", value);
+        newState.user = { ...this.state.user, ...{ password: value } };
+        break;
+      default:
+        console.log("default", value, name);
+        break;
+    }
+    this.setState({ ...newState });
+    console.log("payload", payload);
+  };
+
+  submit = () => {
+    console.log("user", this.state.user);
+    let config = {
+      headers: {
+        Accept: "application/json",
+        password: this.state.user.password,
+        app: "APP_BCK"
+      }
+    };
+    axios
+      .put(
+        "https://dev.tuten.cl:443/TutenREST/rest/user/" + this.state.user.email,
+        {},
+        config
+      )
+      .then(resp => {
+        console.log("Response", resp, resp.data.sessionTokenBck);
+        if (resp.data) {
+          let payload = { token: resp.data.sessionTokenBck };
+          const conf = {
+            headers: {
+              Accept: "application/json",
+              adminemail: "testapis@tuten.cl",
+              token: resp.data.sessionTokenBck,
+              app: "APP_BCK"
+            }
+          };
+          this.setState({ ...this.state, ...payload });
+          axios
+            .get(
+              "https://dev.tuten.cl:443/TutenREST/rest/user/contacto%40tuten.cl/bookings?current=true",
+              conf
+            )
+            .then(resp => {
+              console.log("Response", resp);
+              payload = { books: resp.data };
+              this.setState({ ...this.state, ...payload });
+            })
+            .catch(error => console.log("Error", error));
+        }
+      })
+      .catch(error => console.log("Error", error));
+  };
+
+  renderWeeks = dy => {
+    console.log(
+      "cuadra",
+      dy.tutenUserProfessional.tutenUser1,
+      dy.tutenUserProfessional.tutenUser1.firstName
+    );
+    return (
+      <div key={`${dy.firstName}-monthDay`} className="dayBox dayMonth">
+        <div className="day">
+          {"Client:"}
+          {dy.tutenUserProfessional.tutenUser1.firstName}
+          {dy.tutenUserProfessional.tutenUser1.lastName}
+        </div>
+      </div>
+    );
+  };
+
+  simpleAction = event => {
+    this.props.simpleAction();
+  };
+  render() {
+    const books = this.state.books.map(this.renderWeeks);
+    return (
+      <div className="signInContainer">
+        <div id="sign-in-form">
+          <div className="username-container control">
+            <label>Email</label>
+            <BaseInput
+              type="text"
+              name="email"
+              className=""
+              placeholder=""
+              onChange={e => {
+                this.updateRecipient(e.target.value, e.target.name);
+              }}
+            />
+          </div>
+          <div className="password-container control">
+            <label>Password</label>
+            <BaseInput
+              type="password"
+              name="password"
+              className=""
+              placeholder=""
+              onChange={e => {
+                this.updateRecipient(e.target.value, e.target.name);
+              }}
+            />
+          </div>
+          <button onClick={this.submit} class="button">
+            Add reminder
+          </button>
+        </div>
+        <div className="container ">{books}</div>
+      </div>
+    );
+  }
 }
+const mapStateToProps = state => ({
+  ...state
+});
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  simpleAction: () => dispatch(simpleAction())
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
