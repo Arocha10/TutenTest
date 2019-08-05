@@ -25,7 +25,7 @@
 
 input {
   padding: 5px;
-  width: 100%;
+  width: 80%;
   color: #333;
 }
 
@@ -68,6 +68,8 @@ label {
   display: grid;
   grid-template-columns: 200px 200px;
   grid-template-rows: 200px;
+  grid-column-gap: 25px;
+  grid-row-gap: 25px;
 }
 
 .button:hover {

@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { simpleAction } from "./actions/loginAction";
 import BaseInput from "./base/html5/input";
-import API from "./utils/API";
 import axios from "axios";
-
-import logo from "./logo.svg";
+import LoginComponent from "./containers/LoginComponent";
 import "./App.css";
 class App extends Component {
   constructor(props) {
@@ -21,31 +19,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // Load async data.
-    /*
-      // Load async data from an inexistent endpoint.
-      let userData = await API.patch("/user/login", {
-        params: {
-          email: "testapis@tuten.cl",
-          password: "1234",
-          app: "APP_BCK"
-        }
-      });
-      console.log("user", userData);
-    let params = {
-      email: "testapis@tuten.cl",
-      password: "1234",
-      app: "APP_BCK"
-    };
-    console.log(params);
-    API.put(`/rest/user/testapis%40tuten.cl`)
-      .then(res => {
-        console.log("Res", res);
-        const persons = res.data;
-      })
-      .catch(e => {
-        console.log("Error: ", e.response);
-      });*/
   }
 
   updateRecipient = (value, name) => {
@@ -69,18 +42,18 @@ class App extends Component {
     console.log("payload", payload);
   };
 
-  submit = () => {
-    console.log("user", this.state.user);
+  submit = (user) => {
+    console.log("user", user);
     let config = {
       headers: {
         Accept: "application/json",
-        password: this.state.user.password,
+        password: user.password,
         app: "APP_BCK"
       }
     };
     axios
       .put(
-        "https://dev.tuten.cl:443/TutenREST/rest/user/" + this.state.user.email,
+        "https://dev.tuten.cl:443/TutenREST/rest/user/" + user.email,
         {},
         config
       )
@@ -137,35 +110,7 @@ class App extends Component {
     const books = this.state.books.map(this.renderWeeks);
     return (
       <div className="signInContainer">
-        <div id="sign-in-form">
-          <div className="username-container control">
-            <label>Email</label>
-            <BaseInput
-              type="text"
-              name="email"
-              className=""
-              placeholder=""
-              onChange={e => {
-                this.updateRecipient(e.target.value, e.target.name);
-              }}
-            />
-          </div>
-          <div className="password-container control">
-            <label>Password</label>
-            <BaseInput
-              type="password"
-              name="password"
-              className=""
-              placeholder=""
-              onChange={e => {
-                this.updateRecipient(e.target.value, e.target.name);
-              }}
-            />
-          </div>
-          <button onClick={this.submit} class="button">
-            Add reminder
-          </button>
-        </div>
+        <LoginComponent onSubmit={this.submit}/>
         <div className="container ">{books}</div>
       </div>
     );
